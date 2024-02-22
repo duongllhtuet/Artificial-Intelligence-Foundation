@@ -1,0 +1,52 @@
+xxxxxxxxxxxxxxxx
+x xxx         xx
+x xx xxxxxxxxx x
+x xx x         x
+x xx x xxxxx x x
+x xx x x   x x x
+x xx   x x x x x
+x xxxxx x x x  x
+x x   x   x   xx
+x x xxxxxxxxx xx
+x x x         xx
+x x xxxxx xxx xx
+x         x x xx
+x xxxxx x x x xx
+x     x   x xSxx
+xxxxxxxxxxxxxxxx
+
+=> DFS
+xxxxxxxxxxxxxxxx
+xoxxx         xx 
+xoxxoxxxxxxxxxox
+xoxxoxooooooooox
+xoxxoxoxxxxxoxox
+xoxxoxox   xoxox
+xoxxooox x xoxox
+xoxxxxx x xoxoox
+xoxooox   xoooxx
+xoxoxxxxxxxxxoxx
+xoxoxoooooooooxx
+xoxoxxxxxoxxxoxx
+xooooooooox xoxx
+xoxxxxxoxox xoxx
+xoooooxooox xSxx
+xxxxxxxxxxxxxxxx
+
+=> BFS
+xxxxxxxxxxxxxxxx
+xoxxx         xx
+xoxx xxxxxxxxx x
+xoxx x         x
+xoxx x xxxxx x x
+xoxx x x   x x x
+xoxx   x x x x x
+xoxxxxx x x xoox
+xoxooox   xoooxx
+xoxoxxxxxxxxxoxx
+xoxoxoooooooooxx
+xoxoxxxxxoxxxoxx
+xooooooooox xoxx
+xoxxxxxoxox xoxx
+xoooooxooox xSxx
+xxxxxxxxxxxxxxxx
