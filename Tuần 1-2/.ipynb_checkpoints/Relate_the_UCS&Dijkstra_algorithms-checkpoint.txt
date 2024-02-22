@@ -1,0 +1,23 @@
+Sự Giống Nhau:
+
+-> Dùng cho Đồ thị có trọng số dương: Cả hai thuật toán đều được sử dụng để tìm đường đi trong đồ thị có trọng số dương, nghĩa là các cạnh có trọng số không âm.
+
+-> Dùng giải quyết bài toán tìm đường đi ngắn nhất: Cả hai đều được áp dụng để giải quyết bài toán tìm đường đi ngắn nhất giữa hai đỉnh trong đồ thị.
+
+Sự Khác Nhau:
+
+-> Tiêu chí chọn đỉnh tiếp theo:
+   + UCS: Chọn đỉnh tiếp theo dựa trên chi phí đường đi tới đỉnh đó. Nó chọn đỉnh có chi phí thấp nhất để mở rộng trạng thái.
+   + Dijkstra: Chọn đỉnh tiếp theo dựa trên tổng chi phí tới đỉnh đó qua đường đi đã biết. Nó chọn đỉnh có tổng chi phí thấp nhất.
+   
+-> Cập nhật chi phí:
+   + UCS: Chi phí đến mỗi đỉnh được cập nhật dựa trên chi phí của đường đi tới đỉnh đó.
+   + Dijkstra: Chi phí đến mỗi đỉnh được cập nhật dựa trên tổng chi phí của đường đi đã biết tới đỉnh đó.
+   
+-> Quản lý độ ưu tiên:
+   + UCS: Sử dụng hàng đợi ưu tiên (priority queue) để quản lý các đỉnh chưa được xét, sắp xếp theo chi phí đường đi tăng dần.
+   + Dijkstra: Cũng sử dụng hàng đợi ưu tiên, sắp xếp các đỉnh chưa được xét theo tổng chi phí tăng dần.
+   
+->Áp dụng cho đồ thị có trọng số âm:
+   + UCS: Có thể áp dụng cho đồ thị có trọng số âm, nhưng không thể xử lý các trường hợp chu trình âm.
+   + Dijkstra: Không thể áp dụng cho đồ thị có trọng số âm.
