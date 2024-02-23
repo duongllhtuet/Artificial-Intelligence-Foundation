@@ -1,0 +1,13 @@
+Yêu cầu: Viết chương trình giải bài toán đẩy ô số.
+
+Input: Nhập vào dữ liệu gồm
+
+- 1 số nguyên n là kích thước ô số (n < 10),
+
+- n*n số nguyên phân biệt có giá trị trong khoảng 0 đến n*n -1 là giá trị khởi tạo ban đầu của ô số (theo thứ tự từng hàng), số 0 tương ứng với ô trống
+
+Output:  1 số nguyên không âm là số lần dịch chuyển ít nhất để chuyển ô số về trạng thái thứ tự đúng với ô trống đầu tiên.
+
+Định dạng tệp:
+
+- Tệp mã nguồn với tên npuzzle, phần mở rộng theo quy ước ngôn ngữ lập trình (C++ hoặc Python)
