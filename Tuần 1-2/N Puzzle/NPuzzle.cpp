@@ -3,35 +3,42 @@
 #include <algorithm>
 #include <random>
 #include <queue>
+#include <unordered_set>
 
 using namespace std;
 
-int cost_move;
 int n;
 
-struct NPuzzle
+struct NPuzzleState
 {
-    vector< vector<int> > BoardGame; 
+    vector<vector<int>> BoardGame;
     int index_length;
     int index_width;
-    int heuristic;
+    int cost;
 
-    NPuzzle(vector< vector<int> > BoardGame, int x, int y, int z)
-    {
-        this->BoardGame = BoardGame;
-        this->index_length = x;
-        this->index_width = y;
-        this->heuristic = z;
-    }
+    NPuzzleState(vector<vector<int>> board, int length, int width, int c)
+        : BoardGame(board), index_length(length), index_width(width), cost(c) {}
 
-    bool operator>(const NPuzzle& orther) const 
+    string hash() const
     {
-        return this->heuristic > orther.heuristic;
+        string hashStr;
+        for (const auto &row : BoardGame)
+        {
+            for (int val : row)
+            {
+                hashStr += to_string(val) + ",";
+            }
+        }
+        return hashStr;
     }
 };
 
+bool operator>(const NPuzzleState &lhs, const NPuzzleState &rhs)
+{
+    return lhs.cost + lhs.BoardGame.size() > rhs.cost + rhs.BoardGame.size();
+}
 
-void Input(vector<vector<int>>& BroadGame, int& index_length_start, int& index_width_start)
+void Input(vector<vector<int>> &BroadGame, int &index_length_start, int &index_width_start)
 {
     cout << "Nhap kich thuoc ma tran n (n < 10): ";
     cin >> n;
@@ -63,7 +70,7 @@ void Input(vector<vector<int>>& BroadGame, int& index_length_start, int& index_w
     }
 }
 
-void PrintBoardGame(vector<vector<int>> BroadGame)
+void PrintBoardGame(const vector<vector<int>> &BroadGame)
 {
     for (int i = 0; i < n; i++)
     {
@@ -78,13 +85,13 @@ void PrintBoardGame(vector<vector<int>> BroadGame)
     cout << endl;
 }
 
-int CalculateHeuristic(vector< vector<int> > BoardGame)
+int CalculateHeuristic(const vector<vector<int>> &BoardGame)
 {
     int Heuristic = 0;
 
     for (int i = 0; i < n; i++)
     {
-        for (int j = 0; j < n; j++) 
+        for (int j = 0; j < n; j++)
         {
             int index_x = BoardGame[i][j] % n - 1;
             int index_y = BoardGame[i][j] / n;
@@ -101,9 +108,9 @@ bool isValidToMove(int x, int y)
     return (x < n && x >= 0) && (y < n && y >= 0);
 }
 
-vector< vector<int> > UpdateBoardGame(vector< vector<int> > BoardGame, int x, int y, int x_, int y_)
+vector<vector<int>> UpdateBoardGame(const vector<vector<int>> &BoardGame, int x, int y, int x_, int y_)
 {
-    vector< vector<int> > BoardGame_ = BoardGame;
+    vector<vector<int>> BoardGame_ = BoardGame;
     int value = BoardGame_[x][y];
     BoardGame_[x][y] = BoardGame_[x_][y_];
     BoardGame_[x_][y_] = value;
@@ -111,13 +118,15 @@ vector< vector<int> > UpdateBoardGame(vector< vector<int> > BoardGame, int x, in
     return BoardGame_;
 }
 
-bool StatusGame(vector< vector<int> > BoardGame)
+bool StatusGame(const vector<vector<int>> &BoardGame)
 {
+    int count = 1;
+
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
         {
-            if (BoardGame[n - 1][n - 1] == 0)
+            if (count == n * n)
             {
                 return true;
             }
@@ -126,53 +135,67 @@ bool StatusGame(vector< vector<int> > BoardGame)
             {
                 return false;
             }
+            
+            count++;
         }
     }
 
-    return false;
+    return true;
 }
 
-void A_Star(vector< vector<int> > BoardGame, int index_length_start, int index_width_start)
+bool hasVisited(const unordered_set<string> &visited, const NPuzzleState &state)
 {
+    return visited.count(state.hash()) > 0;
+}
+
+void A(vector<vector<int>> BoardGame, int index_length_start, int index_width_start)
+{
+    if (StatusGame(BoardGame))
+    {
+        cout << "Win. So buoc di chuyen: " << "0" << endl;
+        PrintBoardGame(BoardGame);
+        exit(0);
+    }
     vector<int> x_ = {-1, 0, 1, 0};
     vector<int> y_ = {0, -1, 0, 1};
-    priority_queue< NPuzzle, vector<NPuzzle>, greater<NPuzzle> > p;
-    p.push(NPuzzle(BoardGame, index_length_start, index_width_start, CalculateHeuristic(BoardGame) + cost_move));
-    NPuzzle q = p.top();
-    p.pop();
+    priority_queue<NPuzzleState, vector<NPuzzleState>, greater<NPuzzleState>> p;
+    unordered_set<string> visited;
 
-    for (int i = 0; i < 4; i++)
+    p.push(NPuzzleState(BoardGame, index_length_start, index_width_start, 0));
+
+    while (!p.empty())
     {
-        if (isValidToMove(q.index_length + y_[i], q.index_width + x_[i]))
-        {
-            vector<vector<int>> BoardGame_ = UpdateBoardGame(q.BoardGame, q.index_length, q.index_width, q.index_length + y_[i], q.index_width + x_[i]);
-            int Heuristic_ = CalculateHeuristic(BoardGame_);
-            p.push(NPuzzle(BoardGame_, q.index_length + y_[i], q.index_width + x_[i], Heuristic_ + cost_move + 1));
-        }
-    }
+        NPuzzleState q = p.top();
+        p.pop();
 
-    while(!p.empty())
-    {
-        NPuzzle q_ = p.top(); p.pop();
-        cost_move++;
-
-        PrintBoardGame(q.BoardGame);
-        
-        if (StatusGame(q_.BoardGame))
+        if (StatusGame(q.BoardGame))
         {
-            cout << cost_move;
+            cout << "Win. So buoc di chuyen: " << q.cost << endl;
+            PrintBoardGame(q.BoardGame);
+            exit(0);
         }
+
+        if (hasVisited(visited, q))
+        {
+            continue; 
+        }
+
+        visited.insert(q.hash());
 
         for (int i = 0; i < 4; i++)
         {
             if (isValidToMove(q.index_length + y_[i], q.index_width + x_[i]))
             {
                 vector<vector<int>> BoardGame_ = UpdateBoardGame(q.BoardGame, q.index_length, q.index_width, q.index_length + y_[i], q.index_width + x_[i]);
-                int Heuristic = CalculateHeuristic(BoardGame_);
-                p.push(NPuzzle(BoardGame_, q.index_length + y_[i], q.index_width + x_[i], Heuristic + cost_move + 1));
+                int Heuristic_ = CalculateHeuristic(BoardGame_);
+                p.push(NPuzzleState(BoardGame_, q.index_length + y_[i], q.index_width + x_[i], q.cost + 1));
             }
         }
+
+        PrintBoardGame(q.BoardGame);
     }
+
+    cout << "Khong the giai duoc";
 }
 
 int main()
@@ -185,7 +208,7 @@ int main()
     cout << "Initial Puzzle State:\n";
     PrintBoardGame(BroadGame);
 
-    A_Star(BroadGame, index_length_start, index_width_start);
+    A(BroadGame, index_length_start, index_width_start);
 
     return 0;
 }

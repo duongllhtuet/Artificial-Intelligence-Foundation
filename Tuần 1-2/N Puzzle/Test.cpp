@@ -19,7 +19,6 @@ struct NPuzzleState
     NPuzzleState(vector<vector<int>> board, int length, int width)
         : BoardGame(board), index_length(length), index_width(width) {}
 
-    // Hàm băm tùy chỉnh để biểu diễn trạng thái
     string hash() const
     {
         string hashStr;
@@ -45,12 +44,22 @@ void Input(vector<vector<int>> &BroadGame, int &index_length_start, int &index_w
     cin >> n;
     BroadGame.resize(n, vector<int>(n, 0));
 
-    int index = 1;
+    vector<int> values;
+    for (int i = 0; i < n * n; ++i)
+    {
+        values.push_back(i);
+    }
+
+    random_device rd;
+    mt19937 g(rd());
+    shuffle(values.begin(), values.end(), g);
+
+    int index = 0;
     for (int i = 0; i < n; ++i)
     {
         for (int j = 0; j < n; ++j)
         {
-            cin >> BroadGame[i][j];
+            BroadGame[i][j] = values[index++];
 
             if (BroadGame[i][j] == 0)
             {
@@ -111,14 +120,21 @@ vector<vector<int>> UpdateBoardGame(const vector<vector<int>> &BoardGame, int x,
 
 bool StatusGame(const vector<vector<int>> &BoardGame)
 {
+    int count = 1;
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
         {
+            if (count == n * n)
+            {
+                return true;
+            }
+
             if (BoardGame[i][j] != (i * n + j + 1))
             {
                 return false;
             }
+            count++;
         }
     }
 
@@ -135,9 +151,8 @@ void A(vector<vector<int>> BoardGame, int index_length_start, int index_width_st
     if (StatusGame(BoardGame))
     {
         cout << "Win.....\n" << endl;
+        cout << cost_move << endl;
         PrintBoardGame(BoardGame);
-        cout << endl;
-        cout << cost_move;
         exit(0);
     }
 
@@ -156,15 +171,14 @@ void A(vector<vector<int>> BoardGame, int index_length_start, int index_width_st
         if (StatusGame(q.BoardGame))
         {
             cout << "Win.....\n" << endl;
+            cout << cost_move << endl;
             PrintBoardGame(q.BoardGame);
-            cout << endl;
-            cout << cost_move;
-            break;
+            exit(0);
         }
 
         if (hasVisited(visited, q))
         {
-            continue; // Trạng thái đã thăm, bỏ qua
+            continue; 
         }
 
         visited.insert(q.hash());
@@ -182,20 +196,9 @@ void A(vector<vector<int>> BoardGame, int index_length_start, int index_width_st
         cost_move++;
 
         PrintBoardGame(q.BoardGame);
-
-        BoardGame = q.BoardGame;
     }
 
-    if (StatusGame(BoardGame))
-    {
-        cout << "Win.....\n" << endl;
-        PrintBoardGame(BoardGame);
-        cout << endl;
-        cout << cost_move;
-    } else 
-    {
-        cout << "Không thể xếp được";
-    }
+    cout << "Khong the giai duoc";
 }
 
 int main()
@@ -208,10 +211,7 @@ int main()
     cout << "Initial Puzzle State:\n";
     PrintBoardGame(BroadGame);
 
-    // Call A* algorithm
     A(BroadGame, index_length_start, index_width_start);
-
-
 
     return 0;
 }
